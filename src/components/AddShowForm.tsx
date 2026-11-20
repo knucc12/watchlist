@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Show } from "../data/watchlist";
 import { cn } from "../utils/cn";
+import { MorphIcon } from "morphicons/react";
+import { Loader2, Plus, Save } from "lucide";
 
 type AddShowFormProps = {
+  defaultValues?: Show;
   onSubmit: (data: Omit<Show, "id">) => void;
+  onCancel?: () => void;
   titles: string[];
 };
 
 const KINDS: Show["kind"][] = ["Film", "Serie"];
 
 const defaultState = {
+  isSubmitting: false,
   values: {
     title: "",
     year: "",
@@ -21,10 +26,17 @@ const defaultState = {
   },
 };
 
-const AddShowForm = ({ onSubmit, titles }: AddShowFormProps) => {
+const AddShowForm = ({ defaultValues, onSubmit, onCancel, titles }: AddShowFormProps) => {
   const [formState, setFormState] = useState(defaultState);
 
-  function addShow(e: React.SubmitEvent<HTMLFormElement>) {
+  useEffect(() => {
+    setFormState({
+      ...defaultState,
+      values: defaultValues ? { title: defaultValues.title, year: String(defaultValues.year), kind: defaultValues.kind} : defaultState.values
+    });
+  }, [defaultValues]);
+
+  async function addShow(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const title = formState.values.title.trim();
@@ -55,7 +67,8 @@ const AddShowForm = ({ onSubmit, titles }: AddShowFormProps) => {
       return;
     }
 
-    onSubmit({ title, year, kind: formState.values.kind });
+    setFormState((prev) => ({ ...prev, isSubmitting: true}));
+    await onSubmit({ title, year, kind: formState.values.kind });
     setFormState(defaultState);
   }
 
@@ -114,9 +127,22 @@ const AddShowForm = ({ onSubmit, titles }: AddShowFormProps) => {
         ))}
       </div>
 
-      <button type="submit" className="rounded-full px-4 py-2 bg-blue-400 w-fit cursor-pointer">
-        Aggiungi
-      </button>
+      <div className="flex gap-4">
+        <button type="submit"
+                disabled={formState.isSubmitting}
+                className="rounded-full px-4 py-2 bg-blue-400 w-fit cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex gap-2 items-center justify-center">
+                  <MorphIcon className={cn(formState.isSubmitting && "animate-spin")}
+                            icon={formState.isSubmitting ? Loader2 : defaultValues ? Save : Plus}/>
+                            {defaultValues ? "Modifica" : "Aggiungi"}
+        </button>
+        {defaultValues && ( 
+          <button type="button"
+            disabled={formState.isSubmitting}
+            onClick={onCancel}
+            className="rounded-full px-4 py-2 border border-gray-200 w-fit cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+              Annulla modifica
+            </button>)}
+      </div>
     </form>
   );
 };
