@@ -1,10 +1,10 @@
 {
   "watchlist": [
     {
-      "id": "1",
       "title": "Bridgerton",
       "year": 2020,
-      "kind": "Serie"
+      "kind": "Serie",
+      "id": "1"
     },
     {
       "id": "2",

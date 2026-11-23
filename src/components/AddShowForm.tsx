@@ -74,7 +74,7 @@ const AddShowForm = ({ defaultValues, onSubmit, onCancel, titles }: AddShowFormP
 
   return (
     <form onSubmit={addShow} noValidate className="w-xl max-w-full flex flex-col gap-4">
-      <h2 className="text-center text-xl font-bold">Aggiungi Titolo</h2>
+      {/* <h2 className="text-center text-xl font-bold">Aggiungi Titolo</h2> */}
 
       <input
         className="bg-gray-200 rounded-lg px-4 py-2"
@@ -136,7 +136,7 @@ const AddShowForm = ({ defaultValues, onSubmit, onCancel, titles }: AddShowFormP
                             {defaultValues ? "Modifica" : "Aggiungi"}
         </button>
         {defaultValues && ( 
-          <button type="button"
+          <button type="submit"
             disabled={formState.isSubmitting}
             onClick={onCancel}
             className="rounded-full px-4 py-2 border border-gray-200 w-fit cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
